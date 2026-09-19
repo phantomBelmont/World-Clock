@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta http-equiv="Content-Security-Policy"
+  
+    content= "default-src 'self'; 
+    script-src 'self'; 
+    style-src 'self'; 
+    img-src 'self' data: https:; 
+    font-src 'self' data:; 
+    connect-src 'self'; 
+    base-uri 'self'; 
+    form-action 'self'; 
+    manifest-src 'self'; 
+    worker-src 'self'; 
+    frame-ancestors 'self'; 
+    upgrade-insecure-requests
+  ">
+  <title>🕛World Clock</title>
+  
+  <link rel="stylesheet" href="./style.css">
+  
+  <link rel="manifest"
+  href="./manifest.json">
+  <!--この宣言によってこのサイトはPWAつまりアプリとして認識される-->
+  <!-- 下記は最新ではないiOSバージョン向けの保険として。アドレスバーなどを隠してアプリらしく見せる設定。1文字も変えてはいけない -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+</head>
+
+<body>
+ 🇯🇵🌸 <div id="JPtoday" > </div><br>
+ 🇺🇸🗽 <div id="USAtoday"></div>
+ 🇬🇧💂🏻<div id="UKtoday"></div>
+🇫🇷🥐<div id="FRtoday"></div>
+🇩🇪🍻
+  <div id="GERtoday"></div>
+  🇪🇸💃🏻
+  <div id="SPAtoday"></div>
+  🇮🇹🍝
+  <div id="ITAtoday"></div>
+
+  
+  <script src="./script.js"></script>
+
+
+</body>
+
+</html>
