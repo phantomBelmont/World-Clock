@@ -1,5 +1,5 @@
 //インストール時にファイルを保存
-const clockCACHE = 'v2';
+const clockCACHE = 'v3';
 const ASSETS = [
   './',
   './index.html',
