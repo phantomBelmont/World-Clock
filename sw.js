@@ -1,8 +1,10 @@
 //インストール時にファイルを保存
-const clockCACHE = 'v3';
+const clockCACHE = 'v4';
 const ASSETS = [
   './',
   './index.html',
+  './script.js',
+  './style.css',
   './manifest.json',
   './icon512.png',
   './icon192.png'
