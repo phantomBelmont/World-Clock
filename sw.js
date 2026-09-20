@@ -1,5 +1,4 @@
-//インストール時にファイルを保存
-const clockCACHE = 'v4';
+const clockCACHE = 'v6';
 const ASSETS = [
   './',
   './index.html',
@@ -22,7 +21,7 @@ self.addEventListener(
 //次に古いキャッシュの削除
 self.addEventListener('activate',acti=>{acti.waitUntil(
   caches.keys()
-  .then(KEYS=>Promise.all(KEYS.filter(k=> k !== clockCACHE)
+  .then(KEYS=>Promise.all(KEYS.filter(k=> k !== cloCA)
   .map(k=>caches.delete(k)
   )//mapここまで
   )//Promise.allここまで
@@ -35,14 +34,22 @@ self.addEventListener('activate',acti=>{acti.waitUntil(
 //中身を取ってくる
 self.addEventListener('fetch',fe=>{
   fe.respondWith(
-    caches.match(fe.request).then(MATCH => MATCH ||fetch(fe.request)
-    )//thenここまで
+    fetch(fe.request).then(networkRes=>{if(networkRes.ok){
+      const netCopy = networkRes.clone();
+      caches.open(clockCACHE).then(
+        cloCA=>cloCA.put(fe.request,netCopy)
+      );//open().then
+    }//if
+    return networkRes;
+    }//fetch().then arrow
+    )//fetch().then
+    .catch(()=>caches.match(fe.request))//catch
   );//respondWithここまで
 });//イベリスここまで
 
 
 
-////将来コードを変えたら、clockCACHEのバージョン番号をv2などに手動で変更しないといけない。でないと古いキャッシュを使い続けることになる//  './'HTML など各ファイルが格納されてるフォルダ。このフォルダのキャッシュがなくてもオンラインだったら取りに行けるけど、オフラインだとこの中に入ってるHTMLファイルも当然開けないので真っ白になる。
+//将来コードを変えたら、clockCACHEのバージョン番号をv2などに手動で変更しないといけない。でないと古いキャッシュを使い続けることになる//  './'HTML など各ファイルが格納されてるフォルダ。このフォルダのキャッシュがなくてもオンラインだったら取りに行けるけど、オフラインだとこの中に入ってるHTMLファイルも当然開けないので真っ白になる。
 //サービスワーカー自体はブラウザが自動的に管理するからsw.jsをキャッシュの中に  を保存する必要はない
 //Service WorkerのcachesAPI は、addAllメソッドで、ファイルたちを一気にキャッシュに入れる。アド オールメソッドは配列を欲しがる。だからアセッツは配列でないといけない。
 //cachesはブラウザが用意してくれたキャッシュを保管しておく標準機能の場所。ここに、アプリごとのキャッシュを入れるclockCACHEなどの箱を置く。ファイルたちはこの箱の中に入る。
@@ -57,3 +64,15 @@ self.addEventListener('fetch',fe=>{
 //ウェイトアンティルは細かい作業が全部終わるまで幕を閉じないでねという意味。
 //フェッチというだけあって物がいる。レスポンドウィズは、物を持って ブラウザにレスポンドしますという意味。今回はレスポンドウィズキャッシュ。ブラウザがリクエストしてるのはファイル内容であり、サービスワーカーはそれをキャッシュから出してあげましょうと言う。キャッシュの中身を取ってきてブラウザに献上するのがフェッチイベントの仕事。
 //まずキャッシュの中にマッチするものを探す。リクエストされたものがマッチしたらそれをレスポンドするし、なかったら最新情報をネットワークから取ってくる。
+
+      //😺networkResはfetch()が正常に返してきたレスポンスオブジェクトを受け取るための仮引数。ブラウザに表示用の1回限りのストリーム。コレクターにとってのオリジナル版
+      //fe.requestは、ユーザーやブラウザが「このリクエストを処理して！」と渡してきたリクエストオブジェクト。「今、誰が何を求めているか」が詰まったリクエストの中身のこと
+
+      //OKプロパティは、サーバーに欲しい情報がある状態。そもそもフェッチがネットワークにこんな情報が欲しいと問い合わせ、つまりリクエストした時、サーバーはあるかどうかをHTTPステータスコードという番号で返事する。200番台ならあるよ、301は別の場所に移動済み、403はアクセス禁止、404ならnot found、500はサーバーエラー
+      //フェッチが返すレスポンスボディ、つまりファイルの中身は録画できない映像のように一度見るとデータが流れちゃって二度と取り出せないストリーム形式である。だから保存用にクローンを作っておく必要がある。
+
+      //cloneはネットから最新版をコピーしてくること。コレクターにとっての保存版。
+
+      //putメソッドは辞書オブジェクトを作るのに似ていて、このリクエスト(キー)が来たら この最新版コピー(バリュー)を出そうと決め、ストレージなどに放り込んでおくこと
+
+      //キャッチメソッドは、エラーが起きた時だけ次の関数に橋渡しするだけの役割だから アロー関数にしないといけない
