@@ -1,4 +1,4 @@
-const clockCACHE = 'v8';
+const clockCACHE = 'v9';
 const ASSETS = [
   './',
   './index.html',
